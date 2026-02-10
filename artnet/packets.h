@@ -56,6 +56,7 @@ enum artnet_packet_type_e {
   ARTNET_POLL = 0x2000,
   ARTNET_REPLY = 0x2100,
   ARTNET_DMX = 0x5000,
+  ARTNET_SYNC = 0x5200,
   ARTNET_ADDRESS = 0x6000,
   ARTNET_INPUT = 0x7000,
   ARTNET_TODREQUEST = 0x8000,
@@ -225,6 +226,18 @@ struct artnet_dmx_s {
 typedef struct artnet_dmx_s artnet_dmx_t;
 
 
+struct artnet_sync_s {
+  uint8_t id[8];
+  uint16_t opCode;
+  uint8_t verH;
+  uint8_t ver;
+  uint8_t aux1;
+  uint8_t aux2;
+} PACKED;
+
+typedef struct artnet_sync_s artnet_sync_t;
+
+
 struct artnet_input_s {
   uint8_t id[8];
   uint16_t  opCode;
@@ -376,6 +389,7 @@ typedef union {
   artnet_ipprog_t aip;
   artnet_address_t addr;
   artnet_dmx_t admx;
+  artnet_sync_t async;
   artnet_input_t ainput;
   artnet_todrequest_t todreq;
   artnet_toddata_t toddata;

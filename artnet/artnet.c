@@ -732,6 +732,37 @@ int artnet_raw_send_dmx(artnet_node vn,
 }
 
 
+/*
+ * Sends a sync packet
+ *
+ * @param vn the artnet_node
+ */
+int artnet_send_sync(artnet_node vn) {
+  node n = (node) vn;
+  artnet_packet_t p;
+
+  check_nullnode(vn);
+
+  if (n->state.mode != ARTNET_ON)
+    return ARTNET_EACTION;
+
+  // set packet length
+  p.length = sizeof(artnet_sync_t);
+
+  // build packet
+  memcpy(&p.data.async.id, ARTNET_STRING, ARTNET_STRING_SIZE);
+  p.data.async.opCode =  htols(ARTNET_SYNC);
+  p.data.async.verH = 0;
+  p.data.async.ver = ARTNET_VERSION;
+  p.data.async.aux1 = 0;
+  p.data.async.aux2 = 0;
+
+  // set to bcast
+  p.to.s_addr = n->state.bcast_addr.s_addr;
+
+  return artnet_net_send(n, &p);
+}
+
 
 int artnet_send_address(artnet_node vn,
                         artnet_node_entry e,
