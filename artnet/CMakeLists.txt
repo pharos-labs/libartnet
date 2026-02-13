@@ -39,6 +39,8 @@ target_include_directories(artnet
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+target_compile_definitions(artnet PRIVATE HAVE_CONFIG_H=1)
+
 # Compiler flags
 if(MSVC)
     target_compile_options(artnet PRIVATE /W4)
@@ -58,7 +60,7 @@ if(WIN32)
     if(DPNET_LIB)
         target_link_libraries(artnet PRIVATE ${DPNET_LIB})
     endif()
-    
+
     # For shared library on Windows, export symbols
     if(BUILD_SHARED_LIBS)
         set_target_properties(artnet PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
