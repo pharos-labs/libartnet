@@ -470,6 +470,7 @@ typedef artnet_node_t *node;
 node_entry_private_t *find_private_entry( node n, artnet_node_entry e);
 void check_timeouts(node n);
 node_entry_private_t *find_entry_from_ip(node_list_t *nl, SI ip);
+node_entry_private_t *find_entry_from_ip_and_bind_index(node_list_t *nl, SI ip, uint8_t bind_index);
 int artnet_nl_update(node_list_t *nl, artnet_packet reply);
 
 

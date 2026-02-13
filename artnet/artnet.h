@@ -190,6 +190,7 @@ typedef struct artnet_node_entry_s {
   uint8_t swremote;
   uint8_t style;
   uint8_t mac[ARTNET_MAC_SIZE];        /**< The MAC address of the node */
+  uint8_t bindindex;
 } artnet_node_entry_t;
 
 /** A pointer to an artnet_node_entry_t */

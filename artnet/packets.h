@@ -122,7 +122,9 @@ struct artnet_reply_s {
   uint8_t  sp3;
   uint8_t  style;
   uint8_t  mac[ARTNET_MAC_SIZE];
-  uint8_t  filler[32];
+  uint8_t  bindip[4];
+  uint8_t  bindindex;
+  uint8_t  filler[27];
 } PACKED;
 
 typedef struct artnet_reply_s artnet_reply_t;

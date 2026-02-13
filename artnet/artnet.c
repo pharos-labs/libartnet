@@ -1543,7 +1543,7 @@ char *artnet_strerror() {
 int artnet_nl_update(node_list_t *nl, artnet_packet reply) {
   node_entry_private_t *entry;
 
-  entry = find_entry_from_ip(nl, reply->from);
+  entry = find_entry_from_ip_and_bind_index(nl, reply->from, reply->data.ar.bindindex);
 
   if (!entry) {
     // add to list
@@ -1577,7 +1577,7 @@ int artnet_nl_update(node_list_t *nl, artnet_packet reply) {
 
 
 /*
- * check if this packet is in list
+ * check if this packet is in list, matching on ip address
  */
 node_entry_private_t *find_entry_from_ip(node_list_t *nl, SI ip) {
   node_entry_private_t *tmp;
@@ -1587,6 +1587,21 @@ node_entry_private_t *find_entry_from_ip(node_list_t *nl, SI ip) {
       break;
   }
   return tmp;
+}
+
+
+/*
+ * check if this packet is in list, matching on ip address and bind index
+ */
+node_entry_private_t *find_entry_from_ip_and_bind_index(node_list_t *nl, SI ip, uint8_t bind_index) {
+    node_entry_private_t *tmp;
+
+    for (tmp = nl->first; tmp; tmp = tmp->next) {
+      if ((ip.s_addr == tmp->ip.s_addr) && (bind_index == tmp->pub.bindindex)) {
+        break;
+      }
+    }
+    return tmp;
 }
 
 
@@ -1606,7 +1621,9 @@ int find_nodes_from_uni(node_list_t *nl, uint8_t uni, SI *ips, int size) {
   for (tmp = nl->first; tmp; tmp = tmp->next) {
     int added = FALSE;
     for (i =0; i < tmp->pub.numbports; i++) {
-      if (tmp->pub.swout[i] == uni && ips) {
+      // calculate full universe address
+      uint8_t tmp_uni = ((tmp->pub.sub & LOW_NIBBLE) << 4) | (tmp->pub.swout[i] & LOW_NIBBLE);
+      if (tmp_uni == uni && ips) {
         if (j < size && !added) {
           ips[j++] = tmp->ip;
           added = TRUE;
@@ -1646,6 +1663,7 @@ void copy_apr_to_node_entry(artnet_node_entry e, artnet_reply_t *reply) {
   e->swremote = reply->swremote;
   e->style = reply->style;
   memcpy(&e->mac, &reply->mac, ARTNET_MAC_SIZE);
+  e->bindindex = reply->bindindex;
 }
 
 /*
@@ -1658,7 +1676,7 @@ node_entry_private_t *find_private_entry(node n, artnet_node_entry e) {
 
   // check if this packet is in list
   for (tmp = n->node_list.first; tmp; tmp = tmp->next) {
-    if (!memcmp(&e->ip, &tmp->pub.ip, 4))
+    if (!memcmp(&e->ip, &tmp->pub.ip, 4) && (e->bindindex == tmp->pub.bindindex))
       break;
   }
   return tmp;
