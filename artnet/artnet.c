@@ -1622,7 +1622,7 @@ int find_nodes_from_uni(node_list_t *nl, uint8_t uni, SI *ips, int size) {
     int added = FALSE;
     for (i =0; i < tmp->pub.numbports; i++) {
       // calculate full universe address
-      uint8_t tmp_uni = ((tmp->pub.sub & LOW_NIBBLE) << 4) | (tmp->pub.swout[i] & LOW_NIBBLE);
+      uint8_t tmp_uni = ((tmp->pub.sub & LOW_NIBBLE) << 4) | (tmp->pub.swin[i] & LOW_NIBBLE);
       if (tmp_uni == uni && ips) {
         if (j < size && !added) {
           ips[j++] = tmp->ip;
